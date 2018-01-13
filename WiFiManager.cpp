@@ -297,7 +297,6 @@ uint8_t WiFiManager::waitForConnectResult() {
         keepConnecting = false;
       }
 
-	  //notify we entered AP mode
 	  if (_process != NULL) {
 		  _process();
 	  }
