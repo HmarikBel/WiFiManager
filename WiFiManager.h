@@ -99,6 +99,8 @@ class WiFiManager
     void          setAPCallback( void (*func)(WiFiManager*) );
     //called when settings have been changed and connection was successful
     void          setSaveConfigCallback( void (*func)(void) );
+
+	void          setProcessCallback(void(*func)(void));
     //adds a custom parameter
     void          addParameter(WiFiManagerParameter *p);
     //if this is set, it will exit after config, even if connection is unsuccessful.
@@ -175,6 +177,8 @@ class WiFiManager
 
     void (*_apcallback)(WiFiManager*) = NULL;
     void (*_savecallback)(void) = NULL;
+
+	void(*_process)(void) = NULL;
 
     WiFiManagerParameter* _params[WIFI_MANAGER_MAX_PARAMS];
 

@@ -296,6 +296,11 @@ uint8_t WiFiManager::waitForConnectResult() {
       if (status == WL_CONNECTED || status == WL_CONNECT_FAILED) {
         keepConnecting = false;
       }
+
+	  //notify we entered AP mode
+	  if (_process != NULL) {
+		  _process();
+	  }
       delay(100);
     }
     return status;
@@ -721,6 +726,11 @@ void WiFiManager::setAPCallback( void (*func)(WiFiManager* myWiFiManager) ) {
 //start up save config callback
 void WiFiManager::setSaveConfigCallback( void (*func)(void) ) {
   _savecallback = func;
+}
+
+//start up save config callback
+void WiFiManager::setProcessCallback(void(*func)(void)) {
+	_process = func;
 }
 
 //sets a custom element to add to head, like a new style tag
