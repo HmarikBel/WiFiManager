@@ -35,13 +35,20 @@ const char HTTP_SCAN_LINK[] PROGMEM       = "<br/><div class=\"c\"><a href=\"/wi
 const char HTTP_SAVED[] PROGMEM           = "<div>Credentials Saved<br />Trying to connect ESP to network.<br />If it fails reconnect to AP to try again</div>";
 const char HTTP_END[] PROGMEM             = "</div></body></html>";
 
+#ifndef WIFI_MANAGER_MAX_PARAMS
 #define WIFI_MANAGER_MAX_PARAMS 10
+#endif
 
 class WiFiManagerParameter {
   public:
+    /** 
+        Create custom parameters that can be added to the WiFiManager setup web page
+        @id is used for HTTP queries and must not contain spaces nor other special characters
+    */
     WiFiManagerParameter(const char *custom);
     WiFiManagerParameter(const char *id, const char *placeholder, const char *defaultValue, int length);
     WiFiManagerParameter(const char *id, const char *placeholder, const char *defaultValue, int length, const char *custom);
+    ~WiFiManagerParameter();
 
     const char *getID();
     const char *getValue();
@@ -65,6 +72,7 @@ class WiFiManager
 {
   public:
     WiFiManager();
+    ~WiFiManager();
 
     boolean       autoConnect();
     boolean       autoConnect(char const *apName, char const *apPassword = NULL);
@@ -101,8 +109,9 @@ class WiFiManager
     void          setSaveConfigCallback( void (*func)(void) );
 
 	void          setProcessCallback(void(*func)(void));
-    //adds a custom parameter
-    void          addParameter(WiFiManagerParameter *p);
+
+    //adds a custom parameter, returns false on failure
+    bool          addParameter(WiFiManagerParameter *p);
     //if this is set, it will exit after config, even if connection is unsuccessful.
     void          setBreakAfterConfig(boolean shouldBreak);
     //if this is set, try WPS setup when starting (this will delay config portal for up to 2 mins)
@@ -180,7 +189,9 @@ class WiFiManager
 
 	void(*_process)(void) = NULL;
 
-    WiFiManagerParameter* _params[WIFI_MANAGER_MAX_PARAMS];
+
+    int                    _max_params;
+    WiFiManagerParameter** _params;
 
     template <typename Generic>
     void          DEBUG_WM(Generic text);
